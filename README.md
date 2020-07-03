@@ -45,4 +45,4 @@ Git conventions are being followed and changes go to the develop only from featu
 
 ## License
 
-Profirator copyright@2020
+FIWARE Foundation copyright@2020
