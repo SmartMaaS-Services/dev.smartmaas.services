@@ -168,7 +168,7 @@ app2_id=$(curl -s \
               --data-binary "{
                 \"application\": {
                   \"name\": \"API Catalogue\",
-                  \"description\": \"Catalogue of APIs provided using Profirator\",
+                  \"description\": \"Catalogue of APIs provided using Profirator API Management Platform\",
                   \"url\": \"https://apis.${DOMAIN}\",
                   \"redirect_uri\": \"https://apis.${DOMAIN}/_oauth/fiware\",
                   \"grant_type\": [
