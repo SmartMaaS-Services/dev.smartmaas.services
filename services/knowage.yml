@@ -3,7 +3,7 @@ version: "3.5"
 services:
     knowage:
         image: knowagelabs/knowage-server-docker:7.1
-        #image: profirator/knowage-server-docker:7.1.1
+        #image: smartmaas/knowage.7.1.1.sm
         depends_on:
             - knowagedb
         ports:
