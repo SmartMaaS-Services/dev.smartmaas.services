@@ -13,8 +13,8 @@ helpFunction()
   echo -e "\t[--api-key]\tAPI key of the first created umbrella user"
   echo -e "\t[--token]\tadmin auth token of the first created umbrella user"
   echo -e "\t[--stack]\tdocker swarm stack name\n"
-  echo -e "$(tput bold)$(tput setaf 5)Report bugs to: artoo.detoo@profirator.fi$(tput sgr 0)"
-  echo -e "$(tput bold)$(tput setaf 5)License: Profirator copyright@2020$(tput sgr 0)"
+  echo -e "$(tput bold)$(tput setaf 5)Report bugs to: chandra.challagonda@fiware.org$(tput sgr 0)"
+  echo -e "$(tput bold)$(tput setaf 5)License: FIWARE Foundation copyright@2020$(tput sgr 0)"
   exit 0
 }
 
