@@ -1,0 +1,20 @@
+{
+    "description": "context.DOMAIN_NAME synchronization",
+    "subject": {
+        "entities": [
+            {
+                "idPattern": ".*"
+            }
+        ]
+    },
+    "notification": {
+        "httpCustom": {
+            "url": "https://context.DOMAIN_NAME/v2/op/notify",
+            "headers": {
+                "X-Auth-Method": "Demo"
+            }
+        },
+        "metadata": ["dateCreated", "dateModified"]
+    },
+    "throttling": 5
+}

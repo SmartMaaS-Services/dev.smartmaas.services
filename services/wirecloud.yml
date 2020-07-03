@@ -1,0 +1,105 @@
+version: "3.5"
+
+services:
+    wirecloudnginx:
+        image: nginx:latest
+        depends_on:
+            - wirecloud
+        volumes:
+            - wirecloudnginx-static:/var/www/static:ro
+        configs:
+            - source: wirecloud_nginx
+              target: /etc/nginx/nginx.conf
+        networks:
+            - wirecloud
+            - front
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    wirecloud:
+        image: fiware/wirecloud
+        environment:
+            - DEBUG=False
+            - BASE_DOMAIN=DOMAIN_NAME
+            - ALLOWED_HOSTS=dashboards.DOMAIN_NAME localhost
+            - DB_HOST=wirecloud_postgres
+            - DB_PORT=5432
+            - FORWARDED_ALLOW_IPS=*
+            - ELASTICSEARCH2_URL=http://wirecloud_elasticsearch:9200/
+            - MEMCACHED_LOCATION=wirecloud_memcached:11211
+            - FIWARE_IDM_SERVER=https://accounts.DOMAIN_NAME
+            - SOCIAL_AUTH_FIWARE_KEY=WIRECLOUD_ID
+            - SOCIAL_AUTH_FIWARE_SECRET=WIRECLOUD_SECRET
+        depends_on:
+            - wirecloud_memcached
+            - wirecloud_postgres
+        volumes:
+            - wirecloud-data:/opt/wirecloud_instance/data
+            - wirecloud-static:/var/www/static
+        networks:
+            - front
+            - wirecloud
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    wirecloud_elasticsearch:
+        image: elasticsearch:2.4
+        volumes:
+            - wirecloud-elasticsearch:/usr/share/elasticsearch/data
+        networks:
+            - wirecloud
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    wirecloud_postgres:
+        image: postgres:9.6
+        volumes:
+            - wirecloud-postgres:/var/lib/postgresql/data
+        networks:
+            - wirecloud
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    wirecloud_memcached:
+        image: memcached:1
+        command: memcached -m 2048m
+        networks:
+            - wirecloud
+        deploy:
+            # This is required to fix some connection problems
+            endpoint_mode: dnsrr
+            replicas: 1
+            restart_policy:
+                condition: any
+
+volumes:
+    wirecloudnginx-static:
+        external: true
+    wirecloud-data:
+        external: true
+    wirecloud-static:
+        external: true
+    wirecloud-elasticsearch:
+        external: true
+    wirecloud-postgres:
+        external: true
+
+configs:
+    wirecloud_nginx:
+        file: ../config/wirecloud/wirecloud-nginx.conf
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    wirecloud:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.43.0.0/16

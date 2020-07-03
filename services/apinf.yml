@@ -1,0 +1,36 @@
+version: "3.5"
+
+services:
+    apinf:
+        image: apinf/platform:latest
+        depends_on:
+            - mongo
+        environment:
+            - MONGO_URL=mongodb://mongo/apinfdb
+            - ROOT_URL=https://apis.DOMAIN_NAME
+            - SENTRY_DSN=https://1de35b9a582245aaa7aca935f405f782:82868480e1c64a119ce69bac9b796ef9@sentry.samposoftware.com/9
+        networks:
+            - front
+            - mongo
+            - umbrella
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    umbrella:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.46.0.0/16
+    mongo:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.47.0.0/16

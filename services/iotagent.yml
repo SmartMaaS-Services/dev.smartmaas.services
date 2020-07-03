@@ -1,0 +1,59 @@
+version: "3.5"
+
+services:
+    iot-agent:
+        image: fiware/iotagent-json
+        hostname: iot-agent
+        depends_on:
+            - mongo
+            - orion  
+        ports:
+            - "4041:4041"
+            - "7896:7896"      
+        environment:
+            - "IOTA_CB_HOST=orion"
+            - "IOTA_CB_PORT=1026"
+            - "IOTA_NORTH_PORT=4041"
+            - "IOTA_REGISTRY_TYPE=mongodb"
+            - "IOTA_LOG_LEVEL=DEBUG"  
+            - "IOTA_MONGO_HOST=mongo"
+            - "IOTA_MONGO_PORT=27017"
+            - "IOTA_MONGO_DB=iotagent-json"
+            - "IOTA_HTTP_PORT=7896"
+            - "IOTA_PROVIDER_URL=http://iot-agent:4041"      
+        networks:
+            iot-agent:
+              ipv4_address: 172.51.1.17
+            front:
+                aliases:
+                    - iotagent-json.docker  
+            mongo:
+            orion:      
+        stdin_open: true
+        tty: true
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+networks:
+    iot-agent:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.51.0.0/16
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16              
+    mongo:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.47.0.0/16
+    orion:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.41.0.0/16

@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+    cadvisor:
+        image: 'google/cadvisor:latest'
+        hostname: cadvisor
+        ports:
+            - '8085:8080'
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+            - /dev/disk:/dev/disk/:ro
+        networks:
+            front:
+                aliases:
+                    - cadvisor.docker
+            cadvisor:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    cadvisor:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.48.0.0/16

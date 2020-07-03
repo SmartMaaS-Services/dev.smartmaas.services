@@ -1,0 +1,86 @@
+app_env: production
+
+services:
+  - router
+  - web
+
+override_public_http_port: 443
+override_public_http_proto: https
+
+hosts:
+  - hostname: umbrella.DOMAIN_NAME
+    default: true
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+  - hostname: context.DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+  - hostname: accounts.DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+  - hostname: apis.DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+  - hostname: market.DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+  - hostname: sthdata.DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+  - hostname: dashboards.DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+  - hostname: ngsiproxy.DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+  - hostname: DOMAIN_NAME
+    ssl_cert: /run/secrets/umbrella.crt
+    ssl_cert_key: /run/secrets/umbrella.key
+    http_strict_transport_security: true
+
+
+gatekeeper:
+    api_key_methods:
+        - fiware-oauth2
+        - header
+        - getParam
+    api_key_cache: true
+    default_idp:
+        backend_name: fiware-oauth2
+        host: https://accounts.DOMAIN_NAME
+
+
+mongodb:
+    url: "mongodb://mongo:27017/api_umbrella"
+
+
+elasticsearch:
+    api_version: 2
+    hosts:
+        - http://umbrella_elasticsearch:9200
+
+router:
+    web_app_host: "umbrella.DOMAIN_NAME"
+
+
+web:
+    mailer:
+        smtp_settings:
+            address: SMTP-SERVER
+            port: 587
+            openssl_verify_mode: 'none'
+            authentication: login
+            user_name: SMTP-USER
+            password: SMTP-PASS
+
+nginx:
+  proxy_connect_timeout: 120
+  proxy_read_timeout: 300
+  proxy_send_timeout: 120

@@ -1,0 +1,40 @@
+version: "3.5"
+
+services:
+    tenantmanager:
+        image: profirator/tenant-manager:latest
+        environment:
+            - MONGO_HOST=mongo
+            - IDM_URL=https://accounts.DOMAIN_NAME
+            - UMBRELLA_URL=https://umbrella.DOMAIN_NAME
+        secrets:
+            - credentials_json
+        networks:
+            - front
+            - mongo
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+secrets:
+    credentials_json:
+        name: tenant_manager_credentials
+        file: ../config/tenant-manager/credentials.json
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    umbrella:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.46.0.0/16
+    mongo:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.47.0.0/16

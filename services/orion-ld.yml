@@ -1,0 +1,64 @@
+version: "3.5"
+
+services:
+    orion-ld:
+        image: fiware/orion-ld:latest
+        hostname: orion-ld
+        depends_on:
+            - mongo-ld
+        ports:
+            - "1028:1026"
+        command: -dbhost mongo-ld -logLevel DEBUG
+        #healthcheck needs to be debugged for failure
+        #healthcheck:
+        #        test: ["CMD", "curl", "-f", "http://46.17.108.74:1028/version"]
+        #        interval: 1m
+        #        timeout: 10s
+        #        retries: 3
+        networks:
+            front:
+                aliases:
+                    - orion-ld.docker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    mongo-ld:
+        image: mongo:3.6
+        hostname: mongo-ld
+        ports:
+            - target: 27017
+              protocol: tcp
+              mode: host
+        command: --nojournal
+        volumes:
+            - orion-ld-mongo:/data/db
+        networks:
+            front:
+                aliases:
+                    - mongo-ld.docker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+volumes:
+    orion-ld-mongo:
+        external: true
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    orion-ld:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.62.0.0/16
+    mongo-ld:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.63.0.0/16

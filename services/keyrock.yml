@@ -1,0 +1,57 @@
+version: "3.5"
+
+services:
+    keyrock_mysql:
+        image: mysql:5.7
+        environment:
+            - MYSQL_ROOT_PASSWORD=idm
+        volumes:
+            - keyrock-mysql:/var/lib/mysql
+        networks:
+            - keyrock
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    keyrock:
+        image: fiware/idm
+        depends_on:
+            - keyrock_mysql
+        environment:
+            - SERVER_NAME=accounts.DOMAIN_NAME
+            - DATABASE_HOST=keyrock_mysql
+            - DATABASE_PASS=idm
+            - IDM_DB_HOST=keyrock_mysql
+            - IDM_DB_PASS=idm
+            - SMTP_USER=SMTP-USER
+            - SMTP_PASS=SMTP-PASS
+        configs:
+            - source: keyrock
+              target: /opt/fiware-idm/config.js
+        networks:
+            - front
+            - keyrock
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+volumes:
+    keyrock-mysql:
+        external: true
+
+configs:
+    keyrock:
+        file: ../config/keyrock/keyrock.js
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    keyrock:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.42.0.0/16

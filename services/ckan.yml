@@ -1,0 +1,176 @@
+version: '3.5'
+
+services:
+    ckan:
+        image: fiware/ckan-extended
+        ports:
+            # RUNNING CKAN ON PORT 5001 AS 5000 IS TAKEN BY TENANT MANAGER
+            - 5001:5000
+        depends_on:
+            - db 
+            - solr
+            - redis
+        volumes:
+            - ckan-data:/opt/ckan
+        environment:
+            # Basic Configuration parameters
+            # Defaults work with linked containers, change to use own Postgres, SolR, Redis or Datapusher
+            - CKAN_SQLALCHEMY_URL=postgresql://ckan:ckan@db/ckan
+            - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:ckan@db/datastore
+            - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:datastore@db/datastore
+            - CKAN_SOLR_URL=http://solr:8983/solr/ckan
+            - CKAN_REDIS_URL=redis://redis:6379/1
+            - CKAN_DATAPUSHER_URL=http://datapusher:8800
+            # USE YOUR DOMAIN BELOW 
+            - CKAN_SITE_URL=https://data.DOMAIN_NAME
+            - CKAN_MAX_UPLOAD_SIZE_MB=20
+            - CKAN_VERIFY_REQUESTS=True
+            - CKAN_FILE_ALLOWED=True
+            # OAuth2 (uncomment the following environment variables for
+            # enabling this extension)
+            # See https://github.com/conwetlab/ckanext-oauth2/wiki/Activating-and-Installing
+            - CKAN_OAUTH2_REGISTER_URL=https://accounts.DOMAIN_NAME/sign_up
+            - CKAN_OAUTH2_RESET_URL=https://accounts.DOMAIN_NAME/users/password/new
+            - CKAN_OAUTH2_EDIT_URL=https://accounts.DOMAIN_NAME/idm/settings
+            - CKAN_OAUTH2_AUTHORIZATION_ENDPOINT=https://accounts.DOMAIN_NAME/oauth2/authorize
+            - CKAN_OAUTH2_TOKEN_ENDPOINT=https://accounts.DOMAIN_NAME/oauth2/token
+            - CKAN_OAUTH2_PROFILE_API_URL=https://accounts.DOMAIN_NAME/user
+            - CKAN_OAUTH2_CLIENT_ID=CKAN_ID
+            - CKAN_OAUTH2_CLIENT_SECRET=CKAN_SECRET
+            - CKAN_OAUTH2_SCOPE=all_info
+            - CKAN_OAUTH2_JWT_ENABLE=False
+            - CKAN_OAUTH2_REMEMBERER_NAME=auth_tkt
+            - CKAN_OAUTH2_PROFILE_API_USER_FIELD=id
+            - CKAN_OAUTH2_PROFILE_API_FULLNAME_FIELD=displayName
+            - CKAN_OAUTH2_PROFILE_API_MAIL_FIELD=email
+            - CKAN_OAUTH2_AUTHORIZATION_HEADER=Authorization
+            - CKAN_OAUTH2_LEGACY_IDM=True
+            ## DON'T USE THIS SETTING ON PRODUCTION! ONLY IF URL IS HTTP INSTEAD OF HTTPS
+            #- OAUTHLIB_INSECURE_TRANSPORT=True
+            # Private datasets (uncomment the following environment variables
+            # for enabling this extension)
+            - CKAN_PRIVATEDATASETS_ENABLED=True
+            - CKAN_PRIVATEDATASETS_SHOW_ACQUIRE_URL_ON_CREATE=True
+            - CKAN_PRIVATEDATASETS_SHOW_ACQUIRE_URL_ON_EDIT=True
+            - CKAN_PRIVATEDATASETS_PARSER=ckanext.privatedatasets.parsers.fiware:FiWareNotificationParser
+            # Right time context (it is recommended to enable oauth2 extension)
+            - CKAN_RIGHT_TIME_CONTEXT_ENABLED=True
+            - CKAN_RIGHT_TIME_CONTEXT_VERIFY_REQUESTS=True
+            # WireCloud view (uncomment the following environment variables for
+            # enabling this extension, requires the oauth2 extension)
+            # See https://github.com/conwetlab/ckanext-wirecloud_view
+            - CKAN_WIRECLOUD_VIEW_URL=https://dashboards.DOMAIN_NAME
+            - CKAN_WIRECLOUD_VIEW_EDITOR_DASHBOARD=admin/test
+            # BAE publisher (uncomment the following environment variables for
+            # enabling this extension, requires the oauth2 and privatedatasets extensions)
+            # See https://github.com/FIWARE-TMForum/ckanext-baepublisher/
+            - CKAN_BAEPUBLISHER_STORE_URL=https://market.DOMAIN_NAME
+            # Email Settings
+            - CKAN_SMTP_SERVER=SMTP-SERVER
+            - CKAN_SMTP_STARTTLS=True
+            - CKAN_SMTP_USER=SMTP-USER
+            - CKAN_SMTP_PASSWORD=SMTP-PASS
+            - CKAN_SMTP_MAIL_FROM=SMTP-USER
+            # Data Requests
+            - CKAN_DATAREQUESTS_COMMENTS=true
+            - CKAN_DATAREQUESTS_SHOW_DATAREQUESTS_BADGE=true  
+        networks:
+            front:
+                aliases:
+                  - ckan
+            ckan:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    datapusher:
+        image: clementmouchet/datapusher
+        networks:
+            front:
+                aliases:
+                  - datapusher
+            datapusher:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    solr:
+        image: ckan/solr
+        volumes:
+            - solr-data:/opt/solr/server/solr/ckan/data
+        networks:
+            front:
+                aliases:
+                  - solr
+            solr:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    db:
+        image: ckan/postgresql
+        environment:
+            - DS_RO_PASS=datastore
+            - POSTGRES_PASSWORD=ckan
+        volumes:
+            - ckan-postgres:/var/lib/postgresql/data
+        networks:
+            front:
+                aliases:
+                  - db
+            db:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    redis:
+        image: redis:latest
+        networks:
+            front:
+                aliases:
+                  - redis
+            redis:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+volumes:
+    ckan-data:
+        external: true
+    solr-data:
+        external: true
+    ckan-postgres:
+        external: true
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    ckan:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.52.0.0/16
+    datapusher:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.53.0.0/16
+    solr:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.54.0.0/16
+    db:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.55.0.0/16
+    redis:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.56.0.0/16

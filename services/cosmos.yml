@@ -1,0 +1,73 @@
+version: "3.5"
+
+services:
+    jobmanager:
+        image: flink:1.9.0-scala_2.11
+        ports:
+            - "6123:6123"
+            - "8084:8081"
+            - "9001:9001"
+        command: jobmanager
+        environment:
+            - JOB_MANAGER_RPC_ADDRESS=jobmanager
+        networks:
+            front:
+                aliases:
+                    - jobmanager.docker
+            jobmanager:
+            mongo:
+            orion:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    taskmanager:
+        image: flink:1.9.0-scala_2.11
+        ports:
+            - "6121:6121"
+            - "6122:6122"
+        depends_on:
+            - jobmanager
+        command: taskmanager
+        links:
+            - "jobmanager:jobmanager"
+        environment:
+            - JOB_MANAGER_RPC_ADDRESS=jobmanager
+        networks:
+            front:
+                aliases:
+                    - taskmanager.docker
+            taskmanager:
+            mongo:
+            orion:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+networks:
+    jobmanager:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.66.0.0/16
+    taskmanager:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.65.0.0/16
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    mongo:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.47.0.0/16
+    orion:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.41.0.0/16

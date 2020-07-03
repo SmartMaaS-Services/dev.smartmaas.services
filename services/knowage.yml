@@ -1,0 +1,89 @@
+version: "3.5"
+
+services:
+    knowage:
+        image: knowagelabs/knowage-server-docker:7.1
+        #image: profirator/knowage-server-docker:7.1.1
+        depends_on:
+            - knowagedb
+        ports:
+             - "8083:8080"
+        # The below values for any env. variable should strictly not contain special character, pipe i.e. "|"
+        environment:
+            - DB_USER=knowage
+            - DB_PASS=knowage
+            - DB_DB=knowage
+            - DB_HOST=knowagedb
+            - DB_PORT=3306
+            - HMAC_KEY=knowage
+            - PUBLIC_ADDRESS=localhost
+            - SERVER_NAME=https://knowage.DOMAIN_NAME
+            - KNOWAGE_UTILS_VERSION=knowage-utils-7.1.0.jar
+            - KEYROCK=true
+            - KEYROCK_URL=https://accounts.DOMAIN_NAME
+            - LOGOUT_URL=https://accounts.DOMAIN_NAME
+            - KEYROCK_CLIENT_ID=KNOWAGE_ID
+            - KEYROCK_SECRET=KNOWAGE_SECRET
+            - KEYROCK_AUTH_URL=https://accounts.DOMAIN_NAME/oauth2/authorize
+            - KEYROCK_TOKEN_URL=https://accounts.DOMAIN_NAME/oauth2/token
+            - KEYROCK_USER_URL=https://accounts.DOMAIN_NAME/user
+            - KEYROCK_REDIRECT_URI=https://knowage.DOMAIN_NAME/knowage/servlet/AdapterHTTP?PAGE=LoginPage
+            - KEYROCK_REST_URL=https://accounts.DOMAIN_NAME/v1/
+            - KEYROCK_TOKEN_PATH=auth/tokens
+            - KEYROCK_ROLES_PATH=KNOWAGE_ID/roles
+            - KEYROCK_ORG_INFO_PATH=organizations/
+            - KEYROCK_APPLICATION_ID=KNOWAGE_ID
+            - KEYROCK_ADMIN_ID=IDM_USERID
+            - KEYROCK_ADMIN_EMAIL=IDM_EMAIL
+            - KEYROCK_ADMIN_PASSWORD=IDM_PWD
+        networks:
+            front:
+                aliases:
+                    - knowage.docker
+            knowage:
+            mongo:
+            orion:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    knowagedb:
+        image: mysql:5.7
+        environment:
+            - MYSQL_USER=knowage
+            - MYSQL_PASSWORD=knowage
+            - MYSQL_DATABASE=knowage
+            - MYSQL_ROOT_PASSWORD=knowage
+        networks:
+            - knowage
+        volumes:
+            - knowage-mysql:/var/lib/mysql
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+volumes:
+    knowage-mysql:
+        external: true
+
+networks:
+    knowage:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.44.0.0/16
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    mongo:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.47.0.0/16
+    orion:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.41.0.0/16

@@ -1,0 +1,85 @@
+version: "3.5"
+
+services:
+    umbrella_elasticsearch:
+        image: elasticsearch:2.4
+        command: elasticsearch -Des.index.max_result_window=50000
+        volumes:
+            - umbrella-elasticsearch:/usr/share/elasticsearch/data
+        networks:
+            umbrella:
+                aliases:
+                    - elasticsearch.docker
+            front:
+                aliases:
+                    - elasticsearch.docker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    umbrella:
+        image: profirator/api-umbrella:pre-0.15.3
+        depends_on:
+            - mongo
+            - umbrella_elasticsearch
+        ports:
+            - 443:443
+        environment:
+            - MAXMIND_LICENSE_KEY=CInU1dFAYh8alsUD
+        configs:
+            - source: umbrella_yaml
+              target: /etc/api-umbrella/api-umbrella.yml
+            - source: umbrella_nginx
+              target: /opt/api-umbrella/embedded/openresty/nginx/conf/nginx.conf
+        secrets:
+            - umbrella.crt
+            - umbrella.key
+        networks:
+            umbrella:
+            front:
+                aliases:
+                    - accounts.DOMAIN_NAME
+                    - context.DOMAIN_NAME
+                    - sthdata.DOMAIN_NAME
+                    - umbrella.DOMAIN_NAME
+                    - market.DOMAIN_NAME
+            mongo:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+volumes:
+    umbrella-elasticsearch:
+        external: true
+
+configs:
+    umbrella_yaml:
+        file: ../config/api-umbrella/api-umbrella.yml
+    umbrella_nginx:
+        file: ../config/api-umbrella/api-umbrella-nginx.conf
+
+secrets:
+    umbrella.crt:
+        name: umbrella.crt
+        file: /etc/letsencrypt/live/DOMAIN_NAME/fullchain.pem
+    umbrella.key:
+        name: umbrella.key
+        file: /etc/letsencrypt/live/DOMAIN_NAME/privkey.pem
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    umbrella:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.46.0.0/16
+    mongo:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.47.0.0/16

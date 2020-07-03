@@ -1,0 +1,27 @@
+version: "3.5"
+
+services:
+    nginx:
+        image: nginx:latest
+        networks:
+            - front
+        ports:
+            - 80:80
+        configs:
+            - source: nginx
+              target: /etc/nginx/nginx.conf
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+configs:
+    nginx:
+        file: ../config/nginx/nginx.conf
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16

@@ -1,0 +1,17 @@
+{
+    "description": "Quantum Leap Subscription",
+    "subject": {
+        "entities": [
+            {
+                "idPattern": ".*"
+            }
+        ]
+    },
+    "notification": {
+        "http": {
+            "url": "http://quantumleap:8668/v2/notify"
+        },
+        "metadata": ["dateCreated", "dateModified"]
+    },
+    "throttling": 5
+}

@@ -1,0 +1,52 @@
+version: "3.5"
+
+services:
+  grafana:
+      image: grafana/grafana
+      ports:
+          - 3000:3000
+      depends_on:
+          - quantumleapcrate
+      environment:
+          - GF_SERVER_ROOT_URL=https://charts.DOMAIN_NAME
+          - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-worldmap-panel,ryantxu-ajax-panel,scadavis-synoptic-panel,snuids-trafficlights-panel,flant-statusmap-panel,corpglory-progresslist-panel,neocat-cal-heatmap-panel,briangann-gauge-panel,btplc-status-dot-panel,btplc-alarm-box-panel,michaeldmoore-annunciator-panel,vonage-status-panel,pierosavi-imageit-panel,michaeldmoore-multistat-panel,farski-blendstat-panel,grafana-piechart-panel,yesoreyeram-boomtable-panel
+      volumes:
+          - grafana:/var/lib/grafana
+      configs:
+          - source: grafana_ini
+            target: /etc/grafana/grafana.ini
+      networks:
+         front:
+            aliases:
+                - grafana.docker
+         grafana:
+         quantumleap:        
+      deploy:
+         replicas: 1
+         restart_policy:
+               condition: any
+
+volumes:
+    grafana:
+        external: true
+
+configs:
+    grafana_ini:
+        file: ../config/grafana/grafana.ini
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    grafana:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.59.0.0/16
+    quantumleap:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.45.0.0/16

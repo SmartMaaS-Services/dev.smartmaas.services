@@ -1,0 +1,54 @@
+version: "3.5"
+
+services:
+    iotagent-lora:
+        image: ioeari/iotagent-lora
+        hostname: iotagent-lora
+        entrypoint: bin/iotagent-lora docker/config-docker.js
+        depends_on:
+            - mongo
+            - orion
+        ports:
+            - "4061:4061"
+        configs:
+            - source: lora_docker
+              target: /opt/iotagent-lora/docker/config-docker.js
+        networks:
+            iotagent-lora:
+                ipv4_address: 172.49.1.12
+            front:
+                aliases:
+                    - iotagent-lora.docker
+            mongo:
+            orion:
+        stdin_open: true
+        tty: true
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+configs:
+    lora_docker:
+        file: ../config/iotagent-lora/config-lora-docker.js
+
+networks:
+    iotagent-lora:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.49.0.0/16
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    mongo:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.47.0.0/16
+    orion:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.41.0.0/16

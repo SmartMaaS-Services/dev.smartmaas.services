@@ -1,0 +1,29 @@
+version: "3.5"
+
+services:
+    kurento:
+        image: fiware/stream-oriented-kurento:6.8.0
+        hostname: kurento
+        ports:
+            - 8888:8888
+        networks:
+            front:
+                aliases:
+                    - kurento.docker
+            kurento:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    kurento:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.64.0.0/16

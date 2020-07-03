@@ -1,0 +1,29 @@
+version: "3.5"
+
+services:
+    mail:
+        image: tvial/docker-mailserver
+        environment:
+            - OVERRIDE_HOSTNAME=mail.DOMAIN_NAME
+        configs:
+            - source: mail-accounts
+              target: /tmp/docker-mailserver/postfix-accounts.cf
+        networks:
+            front:
+                aliases:
+                    - mail.docker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+configs:
+    mail-accounts:
+        file: ../config/mail/postfix-accounts.cf
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16

@@ -1,0 +1,68 @@
+version: "3.5"
+
+services:
+    zookeeper:
+        image: bitnami/zookeeper:latest
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+        networks:
+            front:
+                aliases:
+                    - zookeeper.docker
+            zookeeper:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+    nifi:
+        image: profirator/nifi:1.9.2
+        ports:
+            - 8080:8080
+            - 8082:8082
+        volumes:
+            - nifi-logs:/opt/nifi/logs
+            - nifi-conf:/opt/nifi/conf
+            - nifi-flowfile_repository:/opt/nifi/flowfile_repository
+            - nifi-database_repository:/opt/nifi/database_repository
+            - nifi-content_repository:/opt/nifi/content_repository
+            - nifi-provenance_repository:/opt/nifi/provenance_repository
+        networks:
+            front:
+                aliases:
+                    - nifi.docker
+            nifi:
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: any
+
+volumes:
+    nifi-logs:
+        external: true
+    nifi-conf:
+        external: true
+    nifi-flowfile_repository:
+        external: true
+    nifi-database_repository:
+        external: true
+    nifi-content_repository:
+        external: true
+    nifi-provenance_repository:
+        external: true
+
+networks:
+    front:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.40.0.0/16
+    zookeeper:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.57.0.0/16
+    nifi:
+        driver: overlay
+        ipam:
+            config:
+                - subnet: 172.58.0.0/16
