@@ -13,7 +13,7 @@ The whole stack is deployed and managed under **Docker Swarm Cluster**
 
 **Step 1:** Checkout the repo with your credentials
 ```
-git clone https://github.com/Profirator/Docker-Services.git
+git clone https://github.com/SmartMaaS-Services/dev.smartmaas.services/Docker-Services.git
 ```
 
 **Step 2:** Deploy the services in docker swarm by running the script
