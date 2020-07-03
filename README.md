@@ -1,6 +1,6 @@
 # Docker-Services
 
-Docker-Services is a set of directories which contains docker "service yamls" and "configuration" files of **Profirator** Generic Enablers(GE) necessary to setup an initial smart platform.
+Docker-Services is a set of directories which contains docker "service yamls" and "configuration" files of **FIWARE Foundation** Generic Enablers(GE) necessary to setup an initial smart platform.
 
 **Docker-Services** consists of two directories viz. "services" and "config"
 
