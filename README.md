@@ -40,10 +40,10 @@ cd Docker-Services
 ```
 
 **Step 3:** Get umbrella api-key and token and run the second deployment script
-
+```
 Login to "umbrella.<domain>/admin" and register the first user. Note down the Admin API Token <admin-auth-token>. Register yourself as "New API User" and note down the API Key <api-key>.
 	
-```
+
 ./scripts/setup-part2.sh [--domain <domain-name>] [--api-key <api-key>]
 			 [--token <admin-auth-token>] [--stack <swarm-stack-name>]
 ```
