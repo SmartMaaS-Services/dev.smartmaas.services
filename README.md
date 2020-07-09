@@ -10,6 +10,20 @@ Docker-Services is a set of directories which contains docker "service yamls" an
 The whole stack is deployed and managed under **Docker Swarm Cluster**
 
 ## How to Deploy?
+**Preperation of VM**
+Update the VM
+```
+sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install -y zip unzip git
+```
+
+Deploy Wild Card Certificates from Lets Encrypt for the Domain
+```
+sudo apt-get update -y && sudo apt-get install software-properties-common -y
+
+sudo add-apt-repository universe -y && sudo add-apt-repository ppa:certbot/certbot -y && sudo apt-get update -y && sudo apt-get install certbot python-certbot-nginx -y
+
+sudo certbot certonly --manual --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory --email <email> --manual-public-ip-logging-ok --agree-tos -d *.<domain-name>
+```
 
 **Step 1:** Checkout the repo with your credentials
 ```
@@ -26,9 +40,10 @@ cd Docker-Services
 ```
 
 **Step 3:** Get umbrella api-key and token and run the second deployment script
-```
-Login to "umbrella.<domain>/signups" and register the first user. Note down the api-key and token
 
+Login to "umbrella.<domain>/admin" and register the first user. Note down the Admin API Token <admin-auth-token>. Register yourself as "New API User" and note down the API Key <api-key>.
+	
+```
 ./scripts/setup-part2.sh [--domain <domain-name>] [--api-key <api-key>]
 			 [--token <admin-auth-token>] [--stack <swarm-stack-name>]
 ```
