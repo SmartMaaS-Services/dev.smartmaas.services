@@ -25,6 +25,8 @@ sudo add-apt-repository universe -y && sudo add-apt-repository ppa:certbot/certb
 sudo certbot certonly --manual --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory --email <email> --manual-public-ip-logging-ok --agree-tos -d *.<domain-name>
 ```
 
+Deploy a DNS TXT record provided by Let’s Encrypt certbot after running the above command.
+
 **Step 1:** Checkout the repo with your credentials
 ```
 git clone https://github.com/SmartMaaS-Services/dev.smartmaas.services/Docker-Services.git
