@@ -98,12 +98,13 @@ echo -e "$(tput bold)$(tput setaf 5)Successfully updated OS and installed requir
 echo -e "$(tput bold)$(tput setaf 3)\nPerforming prerequisites....$(tput sgr 0)"
 #mkdir -p ${CERT}
 sudo bash -c 'echo "vm.max_map_count=262144" > /etc/sysctl.d/10-Docker-Services.conf' && sudo sysctl -p /etc/sysctl.d/10-Docker-Services.conf
-grep -rl 'DOMAIN_NAME' * --exclude-dir scripts | xargs -i@ sed -i "s/DOMAIN_NAME/${DOMAIN}/g" @
-#grep -rl 'WSDIR' * --exclude-dir scripts | xargs -i@ sed -i "s_WSDIR_${CERT}_g" @
-grep -rl 'SMTP-SERVER' * --exclude-dir scripts | xargs -i@ sed -i "s/SMTP-SERVER/${SMTP_SERVER}/g" @
-grep -rl 'SMTP-USER' * --exclude-dir scripts | xargs -i@ sed -i "s/SMTP-USER/${SMTP_USER}/g" @
-grep -rl 'SMTP-PASS' * --exclude-dir scripts | xargs -i@ sed -i "s/SMTP-PASS/${SMTP_PASS}/g" @
-docker login -u "${HUB_USER}" -p "${HUB_PWD}"
+grep -rl 'DOMAIN_NAME' * --exclude-dir scripts | xargs -i@ sed -i "s|DOMAIN_NAME|${DOMAIN}|g" @
+#grep -rl 'WSDIR' * --exclude-dir scripts | xargs -i@ sed -i "s|WSDIR|${CERT}|g" @
+grep -rl 'SMTP-SERVER' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-SERVER|${SMTP_SERVER}|g" @
+grep -rl 'SMTP-USER' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-USER|${SMTP_USER}|g" @
+grep -rl 'SMTP-PASS' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-PASS|${SMTP_PASS}|g" @
+#read password value from STDIN to prevent it from ending up in the shell’s history or log files
+echo "${HUB_PWD}" | sudo docker login -u "${HUB_USER}" --password-stdin
 echo -e "$(tput bold)$(tput setaf 5)Successfully performed pre-requisites$(tput sgr 0)"
 
 #swarm mode and deployment of services in swarm - part1
