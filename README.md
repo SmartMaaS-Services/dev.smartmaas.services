@@ -29,7 +29,7 @@ Deploy a DNS TXT record provided by Let’s Encrypt certbot after running the ab
 
 **Step 1:** Checkout the repo with your credentials
 ```
-git clone https://github.com/SmartMaaS-Services/dev.smartmaas.services/Docker-Services.git
+git clone https://github.com/SmartMaaS-Services/dev.smartmaas.services.git
 ```
 
 **Step 2:** Deploy the services in docker swarm by running the script
