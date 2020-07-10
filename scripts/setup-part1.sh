@@ -7,7 +7,7 @@ helpFunction()
 {
   echo ""
   echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part1 services and configuration\nfrom the GIT repository on the working machine.\nPlease run script \"setup-part2.sh\" after successful completion of this script.$(tput sgr 0)\n"
-  echo -e "Usage: $0 [--login-user <linux-login-user>] [--hub-user <dockerhub-username>] [--hub-pwd <dockerhub-password>]\n\t\t\t\t[--smtp-server <smtp-server>] [--smtp-user <smtp-user] [--smtp-pwd <smtp-password>]\n\t\t\t\t[--domain <domain-name>] [--email <email>] [--stack <swarm-stack-name>]\n"
+  echo -e "Usage: $0 [--login-user <linux-login-user>] [--hub-user <dockerhub-username>] [--hub-pwd <dockerhub-password>]\n\t\t\t\t[--smtp-server <smtp-server>] [--smtp-user <smtp-user] [--smtp-pwd <smtp-password>]\n\t\t\t\t[--domain <domain-name>] [--stack <swarm-stack-name>]\n"
   echo -e "Mandatory parameters:-"
   echo -e "\t[--login-user]\tssh user"
   echo -e "\t[--hub-user]\tdockerhub username"
@@ -16,7 +16,6 @@ helpFunction()
   echo -e "\t[--smtp-user]\tSMTP user"
   echo -e "\t[--smtp-pwd]\tSMTP password"
   echo -e "\t[--domain]\tdomain name"
-  echo -e "\t[--email]\temail"
   echo -e "\t[--stack]\tdocker Swarm stack name\n"
   echo -e "Optional parameters:-"
   echo -e "\t[--version]\tscript's version\n"
@@ -66,10 +65,6 @@ do
     DOMAIN="$1"
     shift
     ;;
-  --email)
-    EMAIL="$1"
-    shift
-    ;;
   --stack)
     STACK="$1"
     shift
@@ -81,7 +76,7 @@ do
   esac
 done
 
-if [ -z "${USER}" ] || [ -z "${HUB_USER}" ] || [ -z "${HUB_PWD}" ] || [ -z "${SMTP_SERVER}" ] || [ -z "${SMTP_USER}" ] || [ -z "${SMTP_PASS}" ] || [ -z "${DOMAIN}" ] || [ -z "${EMAIL}" ] || [ -z "${STACK}" ]
+if [ -z "${USER}" ] || [ -z "${HUB_USER}" ] || [ -z "${HUB_PWD}" ] || [ -z "${SMTP_SERVER}" ] || [ -z "${SMTP_USER}" ] || [ -z "${SMTP_PASS}" ] || [ -z "${DOMAIN}" ] || [ -z "${STACK}" ]
 then
   echo -e "$(tput bold)$(tput setaf 1)Missing one of the mandatory options$(tput sgr 0)"
   echo -e "$(tput bold)$(tput setaf 2)Usage: $0 [OPTIONS]...\nTry '$0 --help' for more information.$(tput sgr 0)"
