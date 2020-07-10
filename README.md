@@ -34,7 +34,7 @@ git clone https://github.com/SmartMaaS-Services/dev.smartmaas.services.git
 
 **Step 2:** Deploy the services in docker swarm by running the script
 ```
-cd Docker-Services
+cd dev.smartmaas.services
 
 ./scripts/setup-part1.sh [--login-user <linux-login-user>] [--hub-user <dockerhub-username>] [--hub-pwd <dockerhub-password>]
 			 [--smtp-server <smtp-server>] [--smtp-user <smtp-user] [--smtp-pwd <smtp-password>]
