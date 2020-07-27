@@ -6,21 +6,23 @@ version=1.0.0
 helpFunction()
 {
   echo ""
-  echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part1 services and configuration\nfrom the GIT repository on the working machine.\nPlease run script \"setup-part2.sh\" after successful completion of this script.$(tput sgr 0)\n"
-  echo -e "Usage: $0 [--login-user <linux-login-user>] [--hub-user <dockerhub-username>] [--hub-pwd <dockerhub-password>]\n\t\t\t\t[--smtp-server <smtp-server>] [--smtp-user <smtp-user] [--smtp-pwd <smtp-password>]\n\t\t\t\t[--domain <domain-name>] [--stack <swarm-stack-name>]\n"
-  echo -e "Mandatory parameters:-"
-  echo -e "\t[--login-user]\tssh user"
-  echo -e "\t[--hub-user]\tdockerhub username"
-  echo -e "\t[--hub-pwd]\tdockerhub password"
-  echo -e "\t[--smtp-server]\tSMTP server"
-  echo -e "\t[--smtp-user]\tSMTP user"
-  echo -e "\t[--smtp-pwd]\tSMTP password"
-  echo -e "\t[--domain]\tdomain name"
-  echo -e "\t[--stack]\tdocker Swarm stack name\n"
-  echo -e "Optional parameters:-"
-  echo -e "\t[--version]\tscript's version\n"
+  echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part 1 of the platfom services and configuration\nfrom the Git repository on the working machine.\nPlease run script \"setup-part2.sh\" after successful completion of this script.$(tput sgr 0)\n"
+  echo -e "Usage: $0 --login-user '<linux-login-user>' --hub-user '<dockerhub-username>' --hub-pwd '<dockerhub-password>'\n\t\t\t--smtp-server '<smtp-server>' --smtp-user '<smtp-user>' --smtp-pwd '<smtp-password>'\n\t\t\t--domain '<domain-name>' --stack '<swarm-stack-name>'\n"
+  echo -e "Mandatory options:"
+  echo -e "\t--login-user\tlogged-in (or SSH) user that will be added to the docker user group"
+  echo -e "\t--hub-user\tDocker Hub username"
+  echo -e "\t--hub-pwd\tDocker Hub password"
+  echo -e "\t--smtp-server\tSMTP server address"
+  echo -e "\t--smtp-user\tSMTP account user"
+  echo -e "\t--smtp-pwd\tSMTP account password"
+  echo -e "\t--domain\tdomain name"
+  echo -e "\t--stack\tstack name for the Docker Swarm - can be chosen freely\n"
+  echo -e "Optional options:"
+  echo -e "\t--version\tprints out the script's version"
+  echo -e "\t--version\tprints out these help and usage information\n"
   echo -e "$(tput bold)$(tput setaf 5)Report bugs to: chandra.challagonda@fiware.org$(tput sgr 0)"
-  echo -e "$(tput bold)$(tput setaf 5)License: FIWARE Foundation copyright@2020$(tput sgr 0)"
+  echo -e "$(tput bold)$(tput setaf 5)License: AGPL-3.0, (c) 2020 FIWARE Foundation$(tput sgr 0)"
+  echo -e "\n"
   exit 0
 }
 
@@ -86,16 +88,16 @@ fi
 #forming variables and creating directories
 #CERT=/home/${USER}/certificates
 
-#os updates and install softwares
-echo -e "$(tput bold)$(tput setaf 3)Updating OS and installing softwares....$(tput sgr 0)"
+#update OS and install required software
+echo -e "$(tput bold)$(tput setaf 3)\nUpdating OS and installing required software...$(tput sgr 0)"
 sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install -y zip unzip
 sudo apt install -y docker.io && sudo usermod -aG docker ${USER} && sudo systemctl start docker && sudo systemctl enable docker && sudo chown -R ${USER}:${USER} ~/.docker
 sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose && sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-echo -e "$(tput bold)$(tput setaf 5)Successfully updated OS and installed required softwares$(tput sgr 0)"
+echo -e "$(tput bold)$(tput setaf 5)Successfully updated OS and installed required software$(tput sgr 0)"
 
-#performing prerequisites
-echo -e "$(tput bold)$(tput setaf 3)\nPerforming prerequisites....$(tput sgr 0)"
+#configuring required settings
+echo -e "$(tput bold)$(tput setaf 3)\nConfiguring some required settings...$(tput sgr 0)"
 #mkdir -p ${CERT}
 sudo bash -c 'echo "vm.max_map_count=262144" > /etc/sysctl.d/10-Docker-Services.conf' && sudo sysctl -p /etc/sysctl.d/10-Docker-Services.conf
 grep -rl 'DOMAIN_NAME' * --exclude-dir scripts | xargs -i@ sed -i "s|DOMAIN_NAME|${DOMAIN}|g" @
@@ -105,13 +107,14 @@ grep -rl 'SMTP-USER' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-USER|${S
 grep -rl 'SMTP-PASS' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-PASS|${SMTP_PASS}|g" @
 #read password value from STDIN to prevent it from ending up in the shell’s history or log files
 echo "${HUB_PWD}" | sudo docker login -u "${HUB_USER}" --password-stdin
-echo -e "$(tput bold)$(tput setaf 5)Successfully performed pre-requisites$(tput sgr 0)"
+echo -e "$(tput bold)$(tput setaf 5)Successfully configured settings$(tput sgr 0)"
 
-#swarm mode and deployment of services in swarm - part1
-echo -e "$(tput bold)$(tput setaf 3)\nDeploying services to docker swarm....$(tput sgr 0)"
+#swarm mode and deployment of services to Docker Swarm (part 1)
+echo -e "$(tput bold)$(tput setaf 3)\nDeploying services to Docker Swarm...$(tput sgr 0)"
 sudo docker swarm init
 sudo docker stack deploy -c services/mongo.yml -c services/nginx.yml -c services/mail.yml -c services/ngsiproxy.yml -c services/orion.yml -c services/quantumleap.yml ${STACK}
 sudo docker stack deploy -c services/keyrock.yml -c services/umbrella.yml -c services/apinf.yml -c services/grafana.yml -c services/iotagent.yml -c services/iotagent-lora.yml ${STACK}
 sudo docker stack deploy -c services/kurento.yml -c services/nifi.yml -c services/orion-ld.yml -c services/perseo.yml -c services/cosmos.yml -c services/cadvisor.yml ${STACK}
-echo -e "$(tput bold)$(tput setaf 5)Successfully deployed all the services to docker swarm$(tput sgr 0)"
-echo -e "$(tput bold)$(tput setaf 5)Create an umbrella user, get its api-key and auth-token and run setup-part2.sh script$(tput sgr 0)"
+echo -e "$(tput bold)$(tput setaf 5)Successfully deployed all the services to Docker Swarm$(tput sgr 0)"
+echo -e "$(tput bold)$(tput setaf 5)Create an Umbrella user, get its API-Key and Auth-Token and run setup-part2.sh script$(tput sgr 0)"
+echo -e "\n"
