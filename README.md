@@ -43,7 +43,6 @@ Before you set up the platform on your VM or server, a few prerequisites must be
 
 **Preperation of VM**
 
-<div style="padding: 1em; border-radius: 0.4em; background: #F4F4F4;">
 First of all, update/upgrade your VM and install some additional packages.
 
 ```bash
@@ -63,19 +62,15 @@ sudo certbot certonly --manual --preferred-challenges dns-01 --server https://ac
 ```
 
 After running the above command, add the DNS TXT record provided by Let’s Encrypt certbot to your DNS server.
-</div>
 
 **Step 1:**
-<div style="padding: 1em; border-radius: 0.4em; background: #F4F4F4;">
 Checkout this repository with your Git credentials.
 
 ```bash
 git clone https://github.com/SmartMaaS-Services/dev.smartmaas.services.git
 ```
-</div>
 
 **Step 2:**
-<div style="padding: 1em; border-radius: 0.4em; background: #F4F4F4;">
 Change to your local repo directory. It currently contains two setup scripts for configuration and setup of the platform services. Be sure to have execution rights set for both scripts.
 
 ```bash
@@ -107,10 +102,8 @@ Deploy services in Docker Swarm by running the first script. The following optio
 			 --smtp-server '<smtp-server>' --smtp-user '<smtp-user>' --smtp-pwd '<smtp-password>'
 			 --domain '<domain-name>' --stack '<swarm-stack-name>'
 ```
-</div>
 
 **Step 3:** 
-<div style="padding: 1em; border-radius: 0.4em; background: #F4F4F4;">
 In your browser go to <b><i>umbrella.<code>&lt;domain-name&gt;</code>/admin</i></b> and register the first user (the admin). Note down the Auth-Token and set it instead of <code>&lt;admin-auth-token&gt;</code>. Also register yourself as "New API User" and note down the API-Key <code>&lt;api-key&gt;</code> for this user. Afterwards run the second deployment script.
 
 <u><i>Note</i></u>: Also don't forget about the single quotes ('') here.
@@ -119,13 +112,10 @@ In your browser go to <b><i>umbrella.<code>&lt;domain-name&gt;</code>/admin</i><
 ./scripts/setup-part2.sh --domain '<domain-name>' --api-key '<api-key>'
 			 --token '<admin-auth-token>' --stack '<swarm-stack-name>'
 ```
-</div>
 
 ## Services incorporated ##
 
-<div style="padding: 1em; border-radius: 0.4em; background: #F4F4F4;">
 mongo, nginx, mail, ngsiproxy, orion, quantumleap, keyrock, umbrella, apinf, tokenservice, tenant-manager, wirecloud, bae, cadvisor, ckan, grafana, iotagent, iotagent-lora, kurento, nifi, orion-ld, perseo, cosmos
-</div>
 
 ## Contribution ##
 
