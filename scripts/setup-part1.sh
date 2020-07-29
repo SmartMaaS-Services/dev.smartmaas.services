@@ -6,7 +6,7 @@ version=1.0.0
 helpFunction()
 {
   echo ""
-  echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part 1 of the platfom services and configuration\nfrom the Git repository on this machine.\nPlease run script \"setup-part2.sh\" after successful completion of this script.$(tput sgr 0)\n"
+  echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part 1 of the platfom services and configuration\nfrom the Git repository on this machine.\nIMPORTANT: Please run script \"setup-part2.sh\" ONLY AFTER successful completion of this script.$(tput sgr 0)\n"
   echo -e "Usage: $0 --login-user '<linux-login-user>' --hub-user '<dockerhub-username>' --hub-pwd '<dockerhub-password>'\n\t\t\t--smtp-server '<smtp-server>' --smtp-user '<smtp-user>' --smtp-pwd '<smtp-password>'\n\t\t\t--domain '<domain-name>' --stack '<swarm-stack-name>'\n"
   echo -e "Mandatory options:"
   echo -e "\t--login-user\tlogged-in (or SSH) user that will be added to the docker user group"
@@ -16,7 +16,7 @@ helpFunction()
   echo -e "\t--smtp-user\tSMTP account user"
   echo -e "\t--smtp-pwd\tSMTP account password"
   echo -e "\t--domain\tdomain name"
-  echo -e "\t--stack\tstack name for the Docker Swarm - can be chosen freely\n"
+  echo -e "\t--stack\t\tstack name for the Docker Swarm - can be chosen freely\n"
   echo -e "Optional options:"
   echo -e "\t--version\tprints out the script's version"
   echo -e "\t--version\tprints out these help and usage information\n"
