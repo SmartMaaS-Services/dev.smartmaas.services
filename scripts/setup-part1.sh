@@ -6,7 +6,7 @@ version=1.0.0
 helpFunction()
 {
   echo ""
-  echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part 1 of the platfom services and configuration\nfrom the Git repository on the working machine.\nPlease run script \"setup-part2.sh\" after successful completion of this script.$(tput sgr 0)\n"
+  echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part 1 of the platfom services and configuration\nfrom the Git repository on this machine.\nPlease run script \"setup-part2.sh\" after successful completion of this script.$(tput sgr 0)\n"
   echo -e "Usage: $0 --login-user '<linux-login-user>' --hub-user '<dockerhub-username>' --hub-pwd '<dockerhub-password>'\n\t\t\t--smtp-server '<smtp-server>' --smtp-user '<smtp-user>' --smtp-pwd '<smtp-password>'\n\t\t\t--domain '<domain-name>' --stack '<swarm-stack-name>'\n"
   echo -e "Mandatory options:"
   echo -e "\t--login-user\tlogged-in (or SSH) user that will be added to the docker user group"
@@ -116,5 +116,5 @@ sudo docker stack deploy -c services/mongo.yml -c services/nginx.yml -c services
 sudo docker stack deploy -c services/keyrock.yml -c services/umbrella.yml -c services/apinf.yml -c services/grafana.yml -c services/iotagent.yml -c services/iotagent-lora.yml ${STACK}
 sudo docker stack deploy -c services/kurento.yml -c services/nifi.yml -c services/orion-ld.yml -c services/perseo.yml -c services/cosmos.yml -c services/cadvisor.yml ${STACK}
 echo -e "$(tput bold)$(tput setaf 5)Successfully deployed all the services to Docker Swarm$(tput sgr 0)"
-echo -e "$(tput bold)$(tput setaf 5)Create an Umbrella user, get its API-Key and Auth-Token and run setup-part2.sh script$(tput sgr 0)"
+echo -e "$(tput bold)$(tput setaf 5)Next step: Create an API Umbrella admin and another user, get their API-Keys and run setup-part2.sh script$(tput sgr 0)"
 echo -e "\n"
