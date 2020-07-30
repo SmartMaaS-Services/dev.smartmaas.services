@@ -32,6 +32,7 @@ Smart-Platform-Services consists of three directories, `services`, `config` and 
 ## Prerequisites ##
 Before you set up the platform on your VM or server, a few prerequisites must be fulfilled:
 
+- Make sure that your machine has sufficient (V)CPU and RAM. We recommend as an <b>absolute minimum</b> a configuration of <b>8 (V)CPUs / 16 GB RAM</b>. However, <b>16 (V)CPUs / 32 GB RAM</b> or more are <b>better</b> to provide sufficient resources for all services. Practice has shown that a larger configuration significantly improves both response times and inter-service communication.
 - You need a managable domain `<domain-name>` with control over DNS records and the possibility of creating additional subdomains. These subdomains will be used to access the various web interfaces and services the platform is composed of.  
 The following subdomains must be created:
 
