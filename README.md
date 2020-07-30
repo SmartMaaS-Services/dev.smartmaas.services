@@ -139,12 +139,23 @@ Deploy services in Docker Swarm by running the first script. The following optio
 **Step 3 - APInf Umbrella configuration and Identity Manager (IDM) setup:**
 
 Open <b><i>https://<span></span>umbrella.<code>&lt;domain-name&gt;</code>/admin</i></b> in your browser and register the first user - the admin - for the installed [APInf Umbrella](https://github.com/Profirator/api-umbrella) service. APInf Umbrella (a fork of [API Umbrella](https://apiumbrella.io/)) acts as a proxy that sits in front of the services of the Smart Platform and adds functionality like API keys, rate limiting, and analytics. 
+
+<img src="docs/img/umbrella/umbrella_first_signup.png" alt="Image of first API Umbrella signup" width="50%" style="display: block;">
+
 After creation of the admin user you should be redirected to the management dashboard of APInf Umbrella. 
 
 - Go to `'Users' -> 'Admin Accounts'` and select the admin account you've just created by clicking its e-mail address. Copy the Admin API Token and put it in place of `<admin-auth-token>` from the next command.
 
+<img src="docs/img/umbrella/umbrella_edit_admin_marked.png" alt="Image of API Umbrella Edit Admin mask" width="50%" style="margin-left: 3em; display: block;">
+
 - The internal Admin API of APInf Umbrella requires an additional standard user to perform admin requests. These requests will be sent by the second setup script to make the services of the platform (each addressed by one of the created subdomains) reachable behind APInf Umbrella.  
-Go to `'Users' -> 'API Users'` and add a new API user. Fill out the `User Info` section (you can use the same e-mail address as the admin user) and click "Save". The new account should appear in the list of API users. Open it, copy the user's API Key and replace the `<api-key>` placeholder in the shell command.
+Go to `'Users' -> 'API Users'` and add a new API user. Fill out the `User Info` section (you can use the same e-mail address as the admin user) and click "Save".
+
+<img src="docs/img/umbrella/umbrella_add_api_user.png" alt="Image of API Umbrella Add API User mask" width="50%" style="margin-left: 3em; display: block;">
+
+- The new account should appear in the list of API users. Open it, copy the user's API Key and replace the `<api-key>` placeholder in the shell command.
+
+<img src="docs/img/umbrella/umbrella_edit_api_user_marked.png" alt="Image of API Umbrella Edit API User mask" width="50%" style="margin-left: 3em; display: block;">
 
 <u><i>Note</i></u>: Also don't forget about the single quotes ('') here.
 
