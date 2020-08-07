@@ -158,8 +158,8 @@ for (( i=0; i<${#app1_roles[@]}; i++ )) do
   "https://accounts.${DOMAIN}/v1/applications/${app1_id}/roles"
 done
 echo "\nReplacing API_ACCESS_ID and API_ACCESS_SECRET in the repo files"
-grep -rl 'API_ACCESS_ID' * --exclude-dir scripts | xargs -i@ sed -i "s/API_ACCESS_ID/${app1_id}/g" @
-grep -rl 'API_ACCESS_SECRET' * --exclude-dir scripts | xargs -i@ sed -i "s/API_ACCESS_SECRET/${app1_secret}/g" @
+grep -rl 'API_ACCESS_ID' * --exclude-dir scripts | xargs sed -i "s|API_ACCESS_ID|${app1_id}|g"
+grep -rl 'API_ACCESS_SECRET' * --exclude-dir scripts | xargs sed -i "s|API_ACCESS_SECRET|${app1_secret}|g"
 
 echo -e "\n\nAdding IDM application 'API Catalogue'"
 app2_id=$(curl -s \
@@ -237,8 +237,8 @@ for (( i=0; i<${#app3_roles[@]}; i++ )) do
   "https://accounts.${DOMAIN}/v1/applications/${app3_id}/roles"
 done
 echo -e "\nReplacing WIRECLOUD_ID and WIRECLOUD_SECRET in the repo files"
-grep -rl 'WIRECLOUD_ID' * --exclude-dir scripts | xargs -i@ sed -i "s/WIRECLOUD_ID/${app3_id}/g" @
-grep -rl 'WIRECLOUD_SECRET' * --exclude-dir scripts | xargs -i@ sed -i "s/WIRECLOUD_SECRET/${app3_secret}/g" @
+grep -rl 'WIRECLOUD_ID' * --exclude-dir scripts | xargs sed -i "s|WIRECLOUD_ID|${app3_id}|g"
+grep -rl 'WIRECLOUD_SECRET' * --exclude-dir scripts | xargs sed -i "s|WIRECLOUD_SECRET|${app3_secret}|g"
 
 echo -e "\n\nAdding IDM application 'BAE'"
 app4_id=$(curl -s \
@@ -278,8 +278,8 @@ for (( i=0; i<${#app4_roles[@]}; i++ )) do
   "https://accounts.${DOMAIN}/v1/applications/${app4_id}/roles"
 done
 echo -e "\nReplacing BAE_ID and BAE_SECRET in the repo files"
-grep -rl 'BAE_ID' * --exclude-dir scripts | xargs -i@ sed -i "s/BAE_ID/${app4_id}/g" @
-grep -rl 'BAE_SECRET' * --exclude-dir scripts | xargs -i@ sed -i "s/BAE_SECRET/${app4_secret}/g" @
+grep -rl 'BAE_ID' * --exclude-dir scripts | xargs sed -i "s|BAE_ID|${app4_id}|g"
+grep -rl 'BAE_SECRET' * --exclude-dir scripts | xargs sed -i "s|BAE_SECRET|${app4_secret}|g"
 
 echo "\n\nAdding IDM application 'CKAN'"
 app5_id=$(curl -s \
@@ -319,8 +319,8 @@ for (( i=0; i<${#app5_roles[@]}; i++ )) do
   "https://accounts.${DOMAIN}/v1/applications/${app5_id}/roles"
 done
 echo -e "\nReplacing CKAN_ID and CKAN_SECRET in the repo files"
-grep -rl 'CKAN_ID' * --exclude-dir scripts | xargs -i@ sed -i "s/CKAN_ID/${app5_id}/g" @
-grep -rl 'CKAN_SECRET' * --exclude-dir scripts | xargs -i@ sed -i "s/CKAN_SECRET/${app5_secret}/g" @
+grep -rl 'CKAN_ID' * --exclude-dir scripts | xargs sed -i "s|CKAN_ID|${app5_id}|g"
+grep -rl 'CKAN_SECRET' * --exclude-dir scripts | xargs sed -i "s|CKAN_SECRET|${app5_secret}|g"
 
 echo -e "\n\nAdding IDM application 'Knowage'"
 app6_id=$(curl -s \
@@ -360,17 +360,17 @@ for (( i=0; i<${#app6_roles[@]}; i++ )) do
   "https://accounts.${DOMAIN}/v1/applications/${app6_id}/roles"
 done
 echo -e "\nReplacing KNOWAGE_ID and KNOWAGE_SECRET in the repo files"
-grep -rl 'KNOWAGE_ID' * --exclude-dir scripts | xargs -i@ sed -i "s/KNOWAGE_ID/${app6_id}/g" @
-grep -rl 'KNOWAGE_SECRET' * --exclude-dir scripts | xargs -i@ sed -i "s/KNOWAGE_SECRET/${app6_secret}/g" @
+grep -rl 'KNOWAGE_ID' * --exclude-dir scripts | xargs sed -i "s|KNOWAGE_ID|${app6_id}|g"
+grep -rl 'KNOWAGE_SECRET' * --exclude-dir scripts | xargs sed -i "s|KNOWAGE_SECRET|${app6_secret}|g"
 
 echo -e "\nReplacing IDM_USERID, IDM_EMAIL and IDM_PWD in the repo files"
-grep -rl 'IDM_USERID' * --exclude-dir scripts | xargs -i@ sed -i "s/IDM_USERID/${IDM_USERID}/g" @
+grep -rl 'IDM_USERID' * --exclude-dir scripts | xargs sed -i "s|IDM_USERID|${IDM_USERID}|g"
 email_files=$(grep -rl 'IDM_EMAIL' * --exclude-dir scripts)
 for i in $email_files
 do
-        sed -i "s/IDM_EMAIL/${IDM_EMAIL}/g" $i
+        sed -i "s|IDM_EMAIL|${IDM_EMAIL}|g" $i
 done
-grep -rl 'IDM_PWD' * --exclude-dir scripts | xargs -i@ sed -i "s/IDM_PWD/${IDM_PWD}/g" @
+grep -rl 'IDM_PWD' * --exclude-dir scripts | xargs sed -i "s|IDM_PWD|${IDM_PWD}|g"
 echo -e "$(tput bold)$(tput setaf 5)Successfully added applications to IDM$(tput sgr 0)"
 
 #deployment of services to Docker Swarm (part 2)
