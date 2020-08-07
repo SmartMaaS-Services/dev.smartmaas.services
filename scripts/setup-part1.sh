@@ -100,11 +100,11 @@ echo -e "$(tput bold)$(tput setaf 5)Successfully updated OS and installed requir
 echo -e "$(tput bold)$(tput setaf 3)\nConfiguring some required settings...$(tput sgr 0)"
 #mkdir -p ${CERT}
 sudo bash -c 'echo "vm.max_map_count=262144" > /etc/sysctl.d/10-Docker-Services.conf' && sudo sysctl -p /etc/sysctl.d/10-Docker-Services.conf
-grep -rl 'DOMAIN_NAME' * --exclude-dir scripts | xargs -i@ sed -i "s|DOMAIN_NAME|${DOMAIN}|g" @
-#grep -rl 'WSDIR' * --exclude-dir scripts | xargs -i@ sed -i "s|WSDIR|${CERT}|g" @
-grep -rl 'SMTP-SERVER' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-SERVER|${SMTP_SERVER}|g" @
-grep -rl 'SMTP-USER' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-USER|${SMTP_USER}|g" @
-grep -rl 'SMTP-PASS' * --exclude-dir scripts | xargs -i@ sed -i "s|SMTP-PASS|${SMTP_PASS}|g" @
+grep -rl 'DOMAIN_NAME' * --exclude-dir scripts | xargs sed -i "s|DOMAIN_NAME|${DOMAIN}|g"
+#grep -rl 'WSDIR' * --exclude-dir scripts | xargs sed -i "s|WSDIR|${CERT}|g"
+grep -rl 'SMTP-SERVER' * --exclude-dir scripts | xargs sed -i "s|SMTP-SERVER|${SMTP_SERVER}|g"
+grep -rl 'SMTP-USER' * --exclude-dir scripts | xargs sed -i "s|SMTP-USER|${SMTP_USER}|g"
+grep -rl 'SMTP-PASS' * --exclude-dir scripts | xargs sed -i "s|SMTP-PASS|${SMTP_PASS}|g"
 #read password value from STDIN to prevent it from ending up in the shell’s history or log files
 echo "${HUB_PWD}" | sudo docker login -u "${HUB_USER}" --password-stdin
 echo -e "$(tput bold)$(tput setaf 5)Successfully configured settings$(tput sgr 0)"
