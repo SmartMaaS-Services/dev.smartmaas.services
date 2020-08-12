@@ -26,6 +26,7 @@ Smart-Platform-Services consists of three directories, `services`, `config` and 
 - [Prerequisites](#prerequisites)
 - [How to deploy?](#how-to-deploy)
 - [Services incorporated](#services-incorporated)
+- [Known issues](#known-issues)
 - [Contribution](#contribution)
 - [License](#license)
 
@@ -136,12 +137,12 @@ Deploy services in Docker Swarm by running the first script. The following optio
 			 --domain '<domain-name>' --stack '<swarm-stack-name>'
 ```
 
-**Step 3 - APInf Umbrella configuration and Identity Manager (IDM) setup:**
+**Step 3 - APInf Umbrella configuration and Keyrock Identity Manager (IDM) setup:**
 
 Open <b><i>https://<span></span>umbrella.<code>&lt;domain-name&gt;</code>/admin</i></b> in your browser and register the first user - the admin - for the installed [APInf Umbrella](https://github.com/Profirator/api-umbrella) service. APInf Umbrella (a fork of [API Umbrella](https://apiumbrella.io/)) acts as a proxy that sits in front of the services of the Smart Platform and adds functionality like API keys, rate limiting, and analytics. 
 
 <p align="center">
-	<img src="docs/img/umbrella/umbrella_first_signup.png" alt="Image of first API Umbrella signup" width="50%">
+	<img src="docs/img/umbrella/umbrella_first_signup.png" alt="Image of first API Umbrella signup" width="80%">
 </p>
 
 After creation of the admin user you should be redirected to the management dashboard of APInf Umbrella. 
@@ -149,20 +150,20 @@ After creation of the admin user you should be redirected to the management dash
 - Go to `'Users' -> 'Admin Accounts'` and select the admin account you've just created by clicking its e-mail address. Copy the Admin API Token and put it in place of `<admin-auth-token>` from the next command.
 
 <p align="center">
-	<img src="docs/img/umbrella/umbrella_edit_admin_marked.png" alt="Image of API Umbrella Edit Admin mask" width="50%">
+	<img src="docs/img/umbrella/umbrella_edit_admin_marked.png" alt="Image of API Umbrella Edit Admin mask" width="80%">
 </p>
 
 - The internal Admin API of APInf Umbrella requires an additional standard user to perform admin requests. These requests will be sent by the second setup script to make the services of the platform (each addressed by one of the created subdomains) reachable behind APInf Umbrella.  
 Go to `'Users' -> 'API Users'` and add a new API user. Fill out the `User Info` section (you can use the same e-mail address as the admin user) and click "Save".
 
 <p align="center">
-	<img src="docs/img/umbrella/umbrella_add_api_user.png" alt="Image of API Umbrella Add API User mask" width="50%">
+	<img src="docs/img/umbrella/umbrella_add_api_user.png" alt="Image of API Umbrella Add API User mask" width="80%">
 </p>
 
 - The new account should appear in the list of API users. Open it, copy the user's API Key and replace the `<api-key>` placeholder in the shell command.
 
 <p align="center">
-	<img src="docs/img/umbrella/umbrella_edit_api_user_marked.png" alt="Image of API Umbrella Edit API User mask" width="50%">
+	<img src="docs/img/umbrella/umbrella_edit_api_user_marked.png" alt="Image of API Umbrella Edit API User mask" width="80%">
 </p>
 
 <u><i>Note</i></u>: Also don't forget about the single quotes ('') here.
@@ -174,7 +175,39 @@ Go to `'Users' -> 'API Users'` and add a new API user. Fill out the `User Info` 
 
 ## Services incorporated ##
 
-mongo, nginx, mail, ngsiproxy, orion, quantumleap, keyrock, umbrella, apinf, tokenservice, tenant-manager, wirecloud, bae, cadvisor, ckan, grafana, iotagent, iotagent-lora, kurento, nifi, orion-ld, perseo, cosmos
+```
+apinf, bae, bae_apis, bae_charging, bae_elasticsearch, bae_mysql, bae_rss, cadvisor, ckan, datapusher, db, grafana, iot-agent, iotagent-lora, jobmanager, keyrock, keyrock_mysql, knowage, knowagedb, kurento, mail, mongo, mongo-ld, nginx, ngsiproxy, nifi, orion, orion-ld, perseo-core, perseo-fe, quantumleap, quantumleap_redis, quantumleapcrate, redis, solr, taskmanager, tenantmanager, tokenservice, umbrella, umbrella_elasticsearch, wirecloud, wirecloud_elasticsearch, wirecloud_memcached, wirecloud_postgres, wirecloudnginx, zookeeper
+```
+
+After executing both setup scripts, all of the following Docker services above (currently 46) should be up and running.
+
+Verify using
+```bash
+sudo docker ps -a
+```
+<p align="center">
+	<img src="docs/img/setup/docker_ps_a.png" alt="Output of command: sudo docker ps -a" width="80%">
+</p>
+
+or using
+```bash
+sudo docker service ls
+```
+<p align="center">
+	<img src="docs/img/setup/docker_stack_service.png" alt="Output of command: sudo docker service ls" width="80%">
+</p>
+
+## Known issues ##
+
+### Missing Docker services ###
+
+When checking the list of Docker services on your VM, you may notice that some of them are missing. While deploying the YML services for the Smart Platform by executing the command `sudo docker stack deploy -c <YML-file>...` in part 1 of the setup script, not all of the specified services make it into the Swarm stack for reasons unknown so far, which is why required containers are missing. This leads to other containers being continuously exited and restarted because the depending services they contain cannot be connected to the needed services.
+
+Hence it may be necessary to manually repeat the `sudo docker stack deploy -c <YML-files>...` command several times to finally have all needed services in Docker swarm. The output of this command should give a good hint whether deployment was successful or not. The line `Creating service <swarm-stack-name>_<service-name>` is usually a good sign.  
+If you afterwards find more than one container for a specific service listed by `sudo docker ps -a`, you are safe removing these containers via `sudo docker rm <container>`.   
+
+The problem could be related to different start times during deployment. This is the case, for example, if a required service has not yet been placed in the Swarm stack because it is still being deployed, but another service that needs it is already operational.  
+It may also take some time to get ALL services up and running. They may stay in "Created" state for quite a while before switching to "Up". This is not problematic per se, but could lead to the dependency problems mentioned above.
 
 ## Contribution ##
 
