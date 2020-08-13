@@ -68,8 +68,6 @@ The following subdomains must be created:
 
 - You must have a SMTP server ready for sending out e-mails to the platform users (register at a provider of your choice or set up a server on your own which won't be covered by this guide).
 
-- A Docker Hub account is required for pulling required Docker images. Go to [Docker Hub](https://hub.docker.com) to create an account.
-
 ## How to deploy? ##
 
 **Preperation of VM**
@@ -116,8 +114,6 @@ Deploy services in Docker Swarm by running the first script. The following optio
 <pre>
 <i>Mandatory options:</i>  
 <b>--login-user</b>  logged-in (or SSH) user that will be added to the docker user group 
-<b>--hub-user</b>    Docker Hub username  
-<b>--hub-pwd</b>     Docker Hub password  
 <b>--smtp-server</b> SMTP server address  
 <b>--smtp-user</b>   SMTP account user  
 <b>--smtp-pwd</b>    SMTP account password  
@@ -132,7 +128,7 @@ Deploy services in Docker Swarm by running the first script. The following optio
 <u><i>Note</i></u>: Put option values into single quotes ('') to prevent special characters from being interpreted by the shell.
 
 ```bash
-./scripts/setup-part1.sh --login-user '<linux-login-user>' --hub-user '<dockerhub-username>' --hub-pwd '<dockerhub-password>'
+./scripts/setup-part1.sh --login-user '<linux-login-user>' 
 			 --smtp-server '<smtp-server>' --smtp-user '<smtp-user>' --smtp-pwd '<smtp-password>'
 			 --domain '<domain-name>' --stack '<swarm-stack-name>'
 ```

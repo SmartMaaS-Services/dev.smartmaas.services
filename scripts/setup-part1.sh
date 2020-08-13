@@ -7,11 +7,9 @@ helpFunction()
 {
   echo ""
   echo -e "$(tput bold)$(tput setaf 3)This script will setup and deploy part 1 of the platfom services and configuration\nfrom the Git repository on this machine.\nIMPORTANT: Please run script \"setup-part2.sh\" ONLY AFTER successful completion of this script.$(tput sgr 0)\n"
-  echo -e "Usage: $0 --login-user '<linux-login-user>' --hub-user '<dockerhub-username>' --hub-pwd '<dockerhub-password>'\n\t\t\t--smtp-server '<smtp-server>' --smtp-user '<smtp-user>' --smtp-pwd '<smtp-password>'\n\t\t\t--domain '<domain-name>' --stack '<swarm-stack-name>'\n"
+  echo -e "Usage: $0 --login-user '<linux-login-user>'\n\t\t\t--smtp-server '<smtp-server>' --smtp-user '<smtp-user>' --smtp-pwd '<smtp-password>'\n\t\t\t--domain '<domain-name>' --stack '<swarm-stack-name>'\n"
   echo -e "Mandatory options:"
   echo -e "\t--login-user\tlogged-in (or SSH) user that will be added to the docker user group"
-  echo -e "\t--hub-user\tDocker Hub username"
-  echo -e "\t--hub-pwd\tDocker Hub password"
   echo -e "\t--smtp-server\tSMTP server address"
   echo -e "\t--smtp-user\tSMTP account user"
   echo -e "\t--smtp-pwd\tSMTP account password"
@@ -43,14 +41,6 @@ do
     USER="$1"
     shift
     ;;
-  --hub-user)
-    HUB_USER="$1"
-    shift
-    ;;
-  --hub-pwd)
-    HUB_PWD="$1"
-    shift
-    ;;
   --smtp-server)
     SMTP_SERVER="$1"
     shift
@@ -78,7 +68,7 @@ do
   esac
 done
 
-if [ -z "${USER}" ] || [ -z "${HUB_USER}" ] || [ -z "${HUB_PWD}" ] || [ -z "${SMTP_SERVER}" ] || [ -z "${SMTP_USER}" ] || [ -z "${SMTP_PASS}" ] || [ -z "${DOMAIN}" ] || [ -z "${STACK}" ]
+if [ -z "${USER}" ] || [ -z "${SMTP_SERVER}" ] || [ -z "${SMTP_USER}" ] || [ -z "${SMTP_PASS}" ] || [ -z "${DOMAIN}" ] || [ -z "${STACK}" ]
 then
   echo -e "$(tput bold)$(tput setaf 1)Missing one of the mandatory options$(tput sgr 0)"
   echo -e "$(tput bold)$(tput setaf 2)Usage: $0 [OPTIONS]...\nTry '$0 --help' for more information.$(tput sgr 0)"
@@ -105,8 +95,6 @@ grep -rl 'DOMAIN_NAME' * --exclude-dir scripts | xargs sed -i "s|DOMAIN_NAME|${D
 grep -rl 'SMTP-SERVER' * --exclude-dir scripts | xargs sed -i "s|SMTP-SERVER|${SMTP_SERVER}|g"
 grep -rl 'SMTP-USER' * --exclude-dir scripts | xargs sed -i "s|SMTP-USER|${SMTP_USER}|g"
 grep -rl 'SMTP-PASS' * --exclude-dir scripts | xargs sed -i "s|SMTP-PASS|${SMTP_PASS}|g"
-#read password value from STDIN to prevent it from ending up in the shell’s history or log files
-echo "${HUB_PWD}" | sudo docker login -u "${HUB_USER}" --password-stdin
 echo -e "$(tput bold)$(tput setaf 5)Successfully configured settings$(tput sgr 0)"
 
 #swarm mode and deployment of services to Docker Swarm (part 1)
