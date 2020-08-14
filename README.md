@@ -26,6 +26,7 @@ Smart-Platform-Services consists of three directories, `services`, `config` and 
 - [Prerequisites](#prerequisites)
 - [How to deploy?](#how-to-deploy)
 - [Services incorporated](#services-incorporated)
+- [Platform flowchart](#platform-flowchart)
 - [Known issues](#known-issues)
 - [Contribution](#contribution)
 - [License](#license)
@@ -191,6 +192,12 @@ sudo docker service ls
 ```
 <p align="center">
 	<img src="docs/img/setup/docker_stack_service.png" alt="Output of command: sudo docker service ls" width="80%">
+</p>
+
+## Platform flowchart ##
+
+<p align="center">
+	<img src="docs/img/platform/platform_flowchart.png" alt="Flowchart for communication flow between platform components" width="80%">
 </p>
 
 ## Known issues ##
